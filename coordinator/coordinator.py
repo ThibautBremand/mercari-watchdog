@@ -1,12 +1,17 @@
 import json
+import logging
 import time
-from typing import List
-
 import cache.cache
 import web.telegram
+from typing import List
 from config import config
 from scraper import searcher
 from string import Template
+
+logging.basicConfig(
+    format='%(asctime)s %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S')
 
 
 def start(searches: List[config.Search], delay: int, msg_tpl: str, telegram_token: str, telegram_chat_id: str):
@@ -35,7 +40,7 @@ def start(searches: List[config.Search], delay: int, msg_tpl: str, telegram_toke
 
 
 def handle_search(kw: str, cached_ids: List[str]):
-    print(f'Handling keywords {kw}...')
+    logging.info(f'Handling keywords {kw}...')
     res = []
     items = searcher.search(kw, cached_ids)
 
@@ -44,24 +49,24 @@ def handle_search(kw: str, cached_ids: List[str]):
             break
         res.append(it)
 
-    print(f'Found {len(res)} new items for keywords {kw}')
+    logging.info(f'Found {len(res)} new items for keywords {kw}')
 
     return res
 
 
 def write_cache(scraped, cached_data):
-    print('Writing cache...')
+    logging.info('Writing cache...')
     to_persist = build_cache(scraped, cached_data)
     json.dump(to_persist, open('scraped.txt', 'w'))
 
-    print('Cache written!')
+    logging.info('Cache written!')
 
 
 def read_cache():
     try:
         res = json.load(open('scraped.txt'))
     except:
-        print('could not read cache')
+        logging.error('could not read cache')
         return {}
 
     return res
@@ -96,7 +101,7 @@ def build_cache(scraped, cached_data):
 
 
 def send_to_telegram(scraped, msg_tpl: str, telegram_token: str, telegram_chat_id: str):
-    print('Sending messages to Telegram')
+    logging.info('Sending messages to Telegram')
 
     for kw in scraped:
         for it in scraped[kw]:
@@ -114,3 +119,5 @@ def send_to_telegram(scraped, msg_tpl: str, telegram_token: str, telegram_chat_i
             formatted = src.substitute(d)
 
             web.telegram.send_telegram_message(formatted, telegram_token, telegram_chat_id)
+
+    logging.info('Messages sent!')

@@ -12,5 +12,4 @@ def search(keywords, sort="created_time", order="desc"):
     }
 
     items, _ = mercari.fetch(mercari.searchURL, data)
-    yield from items
-
+    return items

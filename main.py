@@ -1,11 +1,8 @@
-import toml
+import config.config as config
+from coordinator import coordinator as coordinator
 
-from searcher import searcher
+print('Starting mercari-watchdog...')
 
-parsed_toml = toml.load('config.toml')
+cfg = config.load()
 
-for s in parsed_toml['searches']:
-    url = s['keywords']
-
-    for item in searcher.search(url):
-        print('{}, {}'.format(item.productName, item.productURL))
+coordinator.start(cfg.searches, cfg.delay, cfg.msg_tpl, cfg.telegram_token, cfg.telegram_chat_id)

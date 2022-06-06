@@ -1,7 +1,7 @@
 delay = 60
 message = """
-{{.Title}}
-{{.URL}} {{.Price}}
+$id $productName
+$productURL ¥$price
 """
 
 [[searches]]

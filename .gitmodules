@@ -1,0 +1,3 @@
+[submodule "mercari"]
+	path = mercari
+	url = https://github.com/marvinody/mercari

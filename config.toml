@@ -1,0 +1,8 @@
+delay = 60
+message = """
+{{.Title}}
+{{.URL}} {{.Price}}
+"""
+
+[[searches]]
+keywords = "your keywords here"

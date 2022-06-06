@@ -13,4 +13,4 @@ COPY . .
 
 RUN git submodule update --init --recursive
 
-CMD [ "python3", "./main.py"]
+CMD [ "python3", "-u", "./main.py"]

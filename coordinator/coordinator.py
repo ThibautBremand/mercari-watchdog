@@ -3,11 +3,13 @@ import time
 from typing import List
 
 import cache.cache
+import web.telegram
 from config import config
 from scraper import searcher
+from string import Template
 
 
-def start(searches: List[config.Search], delay: int):
+def start(searches: List[config.Search], delay: int, msg_tpl: str, telegram_token: str, telegram_chat_id: str):
     while True:
         cached_data = read_cache()
 
@@ -24,6 +26,8 @@ def start(searches: List[config.Search], delay: int):
             items = handle_search(kw, cached_ids)
             scraped[kw] = items
             time.sleep(2)
+
+        send_to_telegram(scraped, msg_tpl, telegram_token, telegram_chat_id)
 
         write_cache(scraped, cached_data)
 
@@ -89,3 +93,24 @@ def build_cache(scraped, cached_data):
         res[kw] = last_ids
 
     return res
+
+
+def send_to_telegram(scraped, msg_tpl: str, telegram_token: str, telegram_chat_id: str):
+    print('Sending messages to Telegram')
+
+    for kw in scraped:
+        for it in scraped[kw]:
+            d = {
+                'id': it.id,
+                'imageURL': it.imageURL,
+                'price': it.price,
+                'productName': it.productName,
+                'productURL': it.productURL,
+                'soldOut': it.soldOut,
+                'status': it.status,
+            }
+
+            src = Template(msg_tpl)
+            formatted = src.substitute(d)
+
+            web.telegram.send_telegram_message(formatted, telegram_token, telegram_chat_id)

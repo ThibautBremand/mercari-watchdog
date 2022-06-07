@@ -2,7 +2,7 @@ delay = 60
 changerate = 0.0087
 message = """
 $id $productName
-$productURL ¥$price
+$productURL ¥$price (USD $priceCurrency)
 """
 
 [[searches]]

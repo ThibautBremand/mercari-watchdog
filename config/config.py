@@ -16,13 +16,15 @@ class Config:
     searches: List[Search]
     delay: int
     msg_tpl: str
+    change_rate: float
 
-    def __init__(self, telegram_chat_id, telegram_token, searches, delay, msg_tpl):
+    def __init__(self, telegram_chat_id, telegram_token, searches, delay, msg_tpl, change_rate):
         self.telegram_chat_id = telegram_chat_id
         self.telegram_token = telegram_token
         self.searches = searches
         self.delay = delay
         self.msg_tpl = msg_tpl
+        self.change_rate = change_rate
 
 
 def load():
@@ -41,12 +43,17 @@ def load():
     delay = parsed_toml['delay']
     msg_tpl = parsed_toml['message']
 
+    change_rate = 0.0
+    if 'changerate' in parsed_toml:
+        change_rate = parsed_toml['changerate']
+
     return Config(
         telegram_chat_id=telegram_chat_id,
         telegram_token=telegram_token,
         searches=searches,
         delay=delay,
-        msg_tpl=msg_tpl
+        msg_tpl=msg_tpl,
+        change_rate=change_rate
     )
 
 

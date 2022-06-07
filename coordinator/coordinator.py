@@ -14,7 +14,7 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S')
 
 
-def start(searches: List[config.Search], delay: int, msg_tpl: str, telegram_token: str, telegram_chat_id: str):
+def start(searches: List[config.Search], delay: int, msg_tpl: str, telegram_token: str, telegram_chat_id: str, change_rate: float):
     while True:
         cached_data = read_cache()
 
@@ -28,7 +28,7 @@ def start(searches: List[config.Search], delay: int, msg_tpl: str, telegram_toke
 
             cached_ids = cached_ids_str.split(cache.cache.last_ids_separator)
 
-            items = handle_search(kw, cached_ids)
+            items = handle_search(kw, cached_ids, change_rate)
             scraped[kw] = items
             time.sleep(2)
 
@@ -39,7 +39,7 @@ def start(searches: List[config.Search], delay: int, msg_tpl: str, telegram_toke
         time.sleep(delay)
 
 
-def handle_search(kw: str, cached_ids: List[str]):
+def handle_search(kw: str, cached_ids: List[str], change_rate: float):
     logging.info(f'Handling keywords {kw}...')
     res = []
     items = searcher.search(kw, cached_ids)
@@ -47,6 +47,8 @@ def handle_search(kw: str, cached_ids: List[str]):
     for it in items:
         if it.id in cached_ids:
             break
+        if change_rate > 0:
+            it.price_currency = it.price * change_rate
         res.append(it)
 
     logging.info(f'Found {len(res)} new items for keywords {kw}')
@@ -114,6 +116,11 @@ def send_to_telegram(scraped, msg_tpl: str, telegram_token: str, telegram_chat_i
                 'soldOut': it.soldOut,
                 'status': it.status,
             }
+
+            if hasattr(it, 'price_currency'):
+                d['priceCurrency'] = it.price_currency
+            else:
+                d['priceCurrency'] = 0
 
             src = Template(msg_tpl)
             formatted = src.substitute(d)

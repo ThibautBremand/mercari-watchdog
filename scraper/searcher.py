@@ -1,3 +1,5 @@
+import logging
+
 import mercari.mercari.mercari as mercari
 
 
@@ -11,5 +13,11 @@ def search(keywords, sort="created_time", order="desc"):
         "order": order,
     }
 
-    items, _ = mercari.fetch(mercari.searchURL, data)
+    items = []
+    try:
+        items = mercari.fetch(mercari.searchURL, data)
+        return items[0]
+    except Exception as e:
+        logging.error(f'error while fetching mercari: {e.__class__}')
+
     return items

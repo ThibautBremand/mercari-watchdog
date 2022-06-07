@@ -1,9 +1,15 @@
-import requests
+import telebot
 
 
-def send_telegram_message(bot_message, bot_token, bot_chat_id):
-    msg = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chat_id + \
-          '&parse_mode=Markdown&text=' + bot_message
-    response = requests.get(msg)
+class TelegramClient:
+    def __init__(self, bot, chat_id: str, download_photos: bool):
+        self.bot = bot
+        self.chat_id = chat_id
+        self.download_photos = download_photos
 
-    return response.json()
+
+def new_telegram_client(token: str, chat_id: str, download_photos: bool):
+    bot = telebot.TeleBot(token, parse_mode=None)
+    client = TelegramClient(bot, chat_id, download_photos)
+
+    return client

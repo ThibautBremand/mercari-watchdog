@@ -65,8 +65,8 @@ def write_cache(scraped, cached_data):
 def read_cache():
     try:
         res = json.load(open('scraped.txt'))
-    except:
-        logging.error('could not read cache')
+    except Exception as e:
+        logging.error(f'could not read cache {e.__class__}')
         return {}
 
     return res

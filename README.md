@@ -40,6 +40,9 @@ Other parameters:
 - `changerate`: rate that will be applied to the original prices in yen, so they will be displayed in a currency that 
   you are familiar. If you are fine with the yen currency, you can set the changerate at zero and only display the 
   prices in yen in the Telegram messages template in `config.toml`.
+- `downloadphotos`: 
+  - if set to `true`, then the photo of each listing will be downloaded, and the messages to Telegram will be sent as "photo with caption" instead of raw text. This is useful if Telegram doesn't display the URLs previews.
+  - if set to `false`, then the messages will be sent to Telegram as raw text.
 
 ### Telegram and .env
 - First, you need to create a [Telegram account](https://desktop.telegram.org/).

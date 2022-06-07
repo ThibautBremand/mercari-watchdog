@@ -37,6 +37,9 @@ keywords = "カーハート"
 
 Other parameters:  
 - `delay`: period, in seconds, between two scraping loops. Keep it reasonably high.
+- `changerate`: rate that will be applied to the original prices in yen, so they will be displayed in a currency that 
+  you are familiar. If you are fine with the yen currency, you can set the changerate at zero and only display the 
+  prices in yen in the Telegram messages template in `config.toml`.
 
 ### Telegram and .env
 - First, you need to create a [Telegram account](https://desktop.telegram.org/).

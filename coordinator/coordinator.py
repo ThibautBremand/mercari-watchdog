@@ -2,7 +2,7 @@ import json
 import logging
 import time
 import cache.cache
-import web.telegram
+import web.telegram as telegram
 from typing import List
 from config import config
 from scraper import searcher
@@ -14,7 +14,13 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S')
 
 
-def start(searches: List[config.Search], delay: int, msg_tpl: str, telegram_token: str, telegram_chat_id: str, change_rate: float):
+def start(
+        searches: List[config.Search],
+        delay: int,
+        msg_tpl: str,
+        change_rate: float,
+        telegram_client: telegram.TelegramClient,
+):
     while True:
         cached_data = read_cache()
 
@@ -32,7 +38,7 @@ def start(searches: List[config.Search], delay: int, msg_tpl: str, telegram_toke
             scraped[kw] = items
             time.sleep(2)
 
-        send_to_telegram(scraped, msg_tpl, telegram_token, telegram_chat_id)
+        send_to_telegram(scraped, msg_tpl, telegram_client)
 
         write_cache(scraped, cached_data)
 
@@ -102,7 +108,7 @@ def build_cache(scraped, cached_data):
     return res
 
 
-def send_to_telegram(scraped, msg_tpl: str, telegram_token: str, telegram_chat_id: str):
+def send_to_telegram(scraped, msg_tpl: str, telegram_client: telegram.TelegramClient):
     logging.info('Sending messages to Telegram')
 
     for kw in scraped:
@@ -125,6 +131,9 @@ def send_to_telegram(scraped, msg_tpl: str, telegram_token: str, telegram_chat_i
             src = Template(msg_tpl)
             formatted = src.substitute(d)
 
-            web.telegram.send_telegram_message(formatted, telegram_token, telegram_chat_id)
+            if telegram_client.download_photos:
+                telegram_client.bot.send_photo(telegram_client.chat_id, it.imageURL, formatted)
+            else:
+                telegram_client.bot.send_message(telegram_client.chat_id, formatted)
 
     logging.info('Messages sent!')

@@ -17,14 +17,16 @@ class Config:
     delay: int
     msg_tpl: str
     change_rate: float
+    download_photos: bool
 
-    def __init__(self, telegram_chat_id, telegram_token, searches, delay, msg_tpl, change_rate):
+    def __init__(self, telegram_chat_id, telegram_token, searches, delay, msg_tpl, change_rate, download_photos):
         self.telegram_chat_id = telegram_chat_id
         self.telegram_token = telegram_token
         self.searches = searches
         self.delay = delay
         self.msg_tpl = msg_tpl
         self.change_rate = change_rate
+        self.download_photos = download_photos
 
 
 def load():
@@ -47,13 +49,18 @@ def load():
     if 'changerate' in parsed_toml:
         change_rate = parsed_toml['changerate']
 
+    download_photos = False
+    if 'downloadphotos' in parsed_toml:
+        download_photos = parsed_toml['downloadphotos']
+
     return Config(
         telegram_chat_id=telegram_chat_id,
         telegram_token=telegram_token,
         searches=searches,
         delay=delay,
         msg_tpl=msg_tpl,
-        change_rate=change_rate
+        change_rate=change_rate,
+        download_photos=download_photos
     )
 
 

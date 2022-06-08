@@ -131,9 +131,12 @@ def send_to_telegram(scraped, msg_tpl: str, telegram_client: telegram.TelegramCl
             src = Template(msg_tpl)
             formatted = src.substitute(d)
 
-            if telegram_client.download_photos:
-                telegram_client.bot.send_photo(telegram_client.chat_id, it.imageURL, formatted)
-            else:
-                telegram_client.bot.send_message(telegram_client.chat_id, formatted)
+            try:
+                if telegram_client.download_photos:
+                    telegram_client.bot.send_photo(telegram_client.chat_id, it.imageURL, formatted)
+                else:
+                    telegram_client.bot.send_message(telegram_client.chat_id, formatted)
+            except Exception as e:
+                logging.error(f'error while sending message to telegram, skipping: {e.__class__}')
 
     logging.info('Messages sent!')

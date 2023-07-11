@@ -54,7 +54,7 @@ def handle_search(kw: str, cached_ids: List[str], change_rate: float):
         if it.id in cached_ids:
             break
         if change_rate > 0:
-            it.price_currency = round(it.price * change_rate, 2)
+            it.price_currency = round(float(it.price) * change_rate, 2)
         res.append(it)
 
     logging.info(f'Found {len(res)} new items for keywords {kw}')

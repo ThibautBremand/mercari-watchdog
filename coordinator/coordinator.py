@@ -48,7 +48,7 @@ def start(
 def handle_search(kw: str, cached_ids: List[str], change_rate: float):
     logging.info(f'Handling keywords {kw}...')
     res = []
-    items = searcher.search(kw, cached_ids)
+    items = searcher.search(kw)
 
     for it in items:
         if it.id in cached_ids:
